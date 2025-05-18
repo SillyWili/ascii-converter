@@ -26,4 +26,4 @@ The [convertSymbol.c]() is useful in the event that jp2a doesn't convert the ima
 
 With [convertSymbol.c]() you can replace a specific symbol/character with another one of your choice
 
-Finally with the [ascii_animation.sh]() you can play every frame of a video/gif exported with ffmpeg
+Finally with the [ascii_animation.sh]() you can play an animation with every frame of a video/gif exported with ffmpeg
