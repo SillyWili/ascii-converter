@@ -19,7 +19,7 @@ jp2a your_file
 Also there are many useful flags for jp2a like:
 
 ```
---width=specify --height --invert --color
+--width=value --height=value --color --invert
 ```
 
 ## Usage
