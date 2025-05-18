@@ -1,0 +1,4 @@
+*.out
+*.exe
+convertSymbol
+.DS_Store
