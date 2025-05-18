@@ -1,6 +1,6 @@
 CC=gcc
 
-all: clearTerminal convertSymbol
+all: clearTerminal convertSymbol run
 
 convertSymbol: convertSymbol.c
 	$(CC) -Wall convertSymbol.c -o convertSymbol
@@ -10,5 +10,8 @@ clearTerminal:
 
 clean: 
 	rm -f convertSymbol
+
+run:
+	./convertSymbol
 
 .PHONY: clearTerminal clean

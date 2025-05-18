@@ -2,3 +2,4 @@
 *.exe
 convertSymbol
 .DS_Store
+*.txt
