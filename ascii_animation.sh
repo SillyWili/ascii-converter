@@ -17,19 +17,25 @@ precise_sleep() {
     perl -e "select(undef, undef, undef, $sec);"
 }
 
-tput civis
-echo -e "\033[?1049h"
+start_video_buffer(){
+    clear
+    tput civis
+    echo -e "\033[?1049h"
+}
 
+end_video_buffer(){
+    echo -e "\033[?1049l"
+    tput cnorm
+    clear
+    rm frames/*.png
+}
+
+start_video_buffer
 for frame in frames/frame_*.png; do
     # Unccoment for debbuggin purpose
     # echo "FPS:[${FPS}] Frame Time:[${frame_time}]" 
-    output=$(jp2a --color-depth=8 --width=150 "$frame")
+    output=$(jp2a --color-depth=24 --width=150 "$frame")
     echo -e "\033[H\033[J${output}"
     precise_sleep $frame_time
 done
-
-echo -e "\033[?1049l"
-tput cnorm
-clear
-
-# rm frames/*.png
+end_video_buffer
