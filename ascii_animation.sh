@@ -8,6 +8,15 @@ frame_time=$(bc --expression="scale = 10; 1 / ${FPS}")
 
 ffmpeg -i $1 -v error -vf scale=320:-1 frames/frame_%03d.png
 
+precise_sleep() {
+    local ms=$1
+    local sec=$(echo "scale=6; $ms/1000" | bc)
+    
+    # Use perl for microsecond precision sleep
+    # This has less overhead than bash's built-in sleep
+    perl -e "select(undef, undef, undef, $sec);"
+}
+
 tput civis
 echo -e "\033[?1049h"
 
@@ -16,7 +25,7 @@ for frame in frames/frame_*.png; do
     # echo "FPS:[${FPS}] Frame Time:[${frame_time}]" 
     output=$(jp2a --color-depth=8 --width=150 "$frame")
     echo -e "\033[H\033[J${output}"
-    sleep $frame_time
+    precise_sleep $frame_time
 done
 
 echo -e "\033[?1049l"
