@@ -3,3 +3,9 @@
 convertSymbol
 .DS_Store
 *.txt
+
+# Exclude frames from commits but keep frames folder
+frames/*.png
+*.png
+*.mp4
+*.gif

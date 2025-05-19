@@ -1,7 +1,26 @@
-for f in frame_*.png; do
-    clear
-    jp2a --width=80 "$f" 
-    sleep 0.00005
+#!/bin/bash
+
+# Add --chars="$CHARS" flag to jp2a to only use the following characters
+CHARS=".:!_-~=MAL0O"
+
+FPS=$(ffprobe -v error -select_streams v:0 -show_entries stream=r_frame_rate -of default=noprint_wrappers=1:nokey=1 $1 | bc -l)
+frame_time=$(bc --expression="scale = 10; 1 / ${FPS}")
+
+ffmpeg -i $1 -v error -vf scale=320:-1 frames/frame_%03d.png
+
+tput civis
+echo -e "\033[?1049h"
+
+for frame in frames/frame_*.png; do
+    # Unccoment for debbuggin purpose
+    # echo "FPS:[${FPS}] Frame Time:[${frame_time}]" 
+    output=$(jp2a --color-depth=8 --width=150 "$frame")
+    echo -e "\033[H\033[J${output}"
+    sleep $frame_time
 done
 
-# Can also add --height --color --invert 
+echo -e "\033[?1049l"
+tput cnorm
+clear
+
+# rm frames/*.png
