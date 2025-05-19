@@ -2,6 +2,7 @@
 
 # Add --chars="$CHARS" flag to jp2a to only use the following characters
 CHARS=".:!_-~=MAL0O"
+DEFAULT_JP2A_OPTIONS=(--color-depth=24 --width=150)
 
 FPS=$(ffprobe -v error -select_streams v:0 -show_entries stream=r_frame_rate -of default=noprint_wrappers=1:nokey=1 $1 | bc -l)
 frame_time=$(bc --expression="scale = 10; 1 / ${FPS}")
@@ -34,7 +35,7 @@ start_video_buffer
 for frame in frames/frame_*.png; do
     # Unccoment for debbuggin purpose
     # echo "FPS:[${FPS}] Frame Time:[${frame_time}]" 
-    output=$(jp2a --color-depth=24 --width=150 "$frame")
+    output=$(jp2a "${DEFAULT_JP2A_OPTIONS[@]}" "$frame")
     echo -e "\033[H\033[J${output}"
     precise_sleep $frame_time
 done
