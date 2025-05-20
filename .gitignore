@@ -6,6 +6,5 @@ convertSymbol
 
 # Exclude frames from commits but keep frames folder
 frames/*.png
-*.png
 *.mp4
 *.gif
