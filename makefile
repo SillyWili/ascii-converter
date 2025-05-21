@@ -12,6 +12,9 @@ clean:
 	rm -f convertSymbol
 
 run:
-	./convertSymbol
+	# ./convertSymbol
+
+display:
+	$(CC) -Wall ascii-display.c -o ascii-display
 
 .PHONY: clearTerminal clean
