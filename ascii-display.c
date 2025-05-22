@@ -9,6 +9,8 @@ const char *SHOW_CURSOR = "\033[?25h";
 const char *OPEN_BUFFER = "\033[?1049h";
 const char *CLOSE_BUFFER = "\033[?1049l";
 
+const int MAX_LINE_LENGHT = 4096;
+
 void clear_screen() { printf("%s", CLEAR_SCREEN); }
 void open_buffer() { printf("%s", OPEN_BUFFER); }
 void close_buffer() { printf("%s", CLOSE_BUFFER); }
@@ -18,8 +20,13 @@ void hide_cursor() { printf("%s", HIDE_CURSOR); }
 int main(int argc, char const *argv[]) {
 
     if (argc == 1) {
-        perror("No input file passed as argument for the script.\nPlease "
-               "provide a video as input for the script to work\n");
+        fprintf(stderr,
+                "No input file passed as argument for the script.\nPlease "
+                "provide a video as input for the script to work.\n\nFor "
+                "instructions on how to use this program please refer to the "
+                "README.md\nUsage: "
+                "%s <video-file.mp4/gif/...>\n",
+                argv[0]);
         return 1;
     } else if (argc > 2) {
         printf("WARNING: more than one argument as been passed as input to the "
@@ -30,11 +37,13 @@ int main(int argc, char const *argv[]) {
     char file_name[100];
     strcpy(file_name, argv[1]);
 
-    printf("\nProcessing the frames\n");
+    printf("\nProcessing frames\n");
     system(strcat(script_name, file_name));
     clear_screen();
 
-    // main display logic for the program
+    // Main display logic for the program
+    // -------------------------------------------------------------------------
+
     hide_cursor();
     open_buffer();
 
@@ -46,12 +55,11 @@ int main(int argc, char const *argv[]) {
 
     while (1) {
         int lines_read = 0;
-        char line[4096];
+        char line[MAX_LINE_LENGHT];
         while (fgets(line, sizeof(line), fptr) != NULL) {
             if (line[0] == '\n') {
                 break;
             }
-
             fputs(line, stdout);
             fflush(stdout);
             lines_read++;
