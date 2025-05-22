@@ -11,11 +11,12 @@ const char *CLOSE_BUFFER = "\033[?1049l";
 
 const int MAX_LINE_LENGHT = 4096;
 
-void clear_screen() { printf("%s", CLEAR_SCREEN); }
-void open_buffer() { printf("%s", OPEN_BUFFER); }
-void close_buffer() { printf("%s", CLOSE_BUFFER); }
-void show_cursor() { printf("%s", SHOW_CURSOR); }
-void hide_cursor() { printf("%s", HIDE_CURSOR); }
+void clear_screen();
+void open_buffer();
+void close_buffer();
+void show_cursor();
+void hide_cursor();
+int get_fps(char *video);
 
 int main(int argc, char const *argv[]) {
 
@@ -34,11 +35,13 @@ int main(int argc, char const *argv[]) {
     }
 
     char script_name[100] = "./ascii-frame-generator.sh ";
-    char file_name[100];
-    strcpy(file_name, argv[1]);
+    char vide_name[100];
+    strcpy(vide_name, argv[1]);
+
+    float frame_time = 1000 / get_fps(vide_name);
 
     printf("\nProcessing frames\n");
-    system(strcat(script_name, file_name));
+    system(strcat(script_name, vide_name));
     clear_screen();
 
     // Main display logic for the program
@@ -65,7 +68,7 @@ int main(int argc, char const *argv[]) {
             lines_read++;
         }
 
-        usleep(40 * 1000);
+        usleep(frame_time * 1000); //microseconds sleep
         clear_screen();
 
         if (lines_read == 0) {
@@ -78,4 +81,37 @@ int main(int argc, char const *argv[]) {
     show_cursor();
 
     return 0;
+}
+
+void clear_screen() { printf("%s", CLEAR_SCREEN); }
+void open_buffer() { printf("%s", OPEN_BUFFER); }
+void close_buffer() { printf("%s", CLOSE_BUFFER); }
+void show_cursor() { printf("%s", SHOW_CURSOR); }
+void hide_cursor() { printf("%s", HIDE_CURSOR); }
+
+int get_fps(char *video) {
+    char command[512];
+    snprintf(command, sizeof(command),
+             "ffprobe -v error -select_streams v:0 "
+             "-show_entries stream=r_frame_rate "
+             "-of default=noprint_wrappers=1:nokey=1 \"%s\" | bc -l",
+             video);
+
+    FILE *fp = popen(command, "r");
+    if (!fp) {
+        perror("popen failed");
+        return 1;
+    }
+
+    double frame_rate;
+    if (fscanf(fp, "%lf", &frame_rate) == 1) {
+        printf("Frame rate: %.2f\n", frame_rate);
+        return frame_rate;
+    } else {
+        fprintf(stderr, "Failed to parse frame rate.\n");
+    }
+
+    pclose(fp);
+    return 30; // In case it failes to parse the frame rate return a default
+               // value of 30
 }
